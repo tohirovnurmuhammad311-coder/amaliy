@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinematika Masalalari</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --surface2: #f0eeea;
+    --accent: #2c4ecf;
+    --accent-light: #e8ecfb;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: #e2e0da;
+    --green: #0f6e56;
+    --green-bg: #e1f5ee;
+    --amber: #854f0b;
+    --amber-bg: #faeeda;
+    --radius: 10px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .header-title { flex: 1; min-width: 200px; }
+
+  .header-title h1 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .header-title p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .search-wrap { position: relative; }
+
+  .search-wrap input {
+    font-family: var(--sans);
+    font-size: 0.875rem;
+    padding: 0.55rem 1rem 0.55rem 2.4rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    width: 260px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .search-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(44,78,207,.12);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .filter-row {
+    max-width: 1100px;
+    margin: 1.5rem auto 0;
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+
+  .pill:hover, .pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .count-bar {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow .15s, transform .15s;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+
+  .card-top {
+    padding: 1rem 1.1rem 0.75rem;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.6rem;
+  }
+
+  .num-badge {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: var(--mono);
+  }
+
+  .tag-badge {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  .card-q {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .given-block {
+    background: var(--surface2);
+    border-top: 1px solid var(--border);
+    padding: 0.6rem 1.1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: var(--mono);
+    line-height: 1.6;
+  }
+
+  .given-label {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+
+  .ans-block {
+    padding: 0.75rem 1.1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .ans-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .ans-val {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: var(--mono);
+    text-align: right;
+  }
+
+  .steps-toggle {
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 1.1rem;
+    border: none;
+    background: none;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--accent);
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .12s;
+  }
+
+  .steps-toggle:hover { background: var(--accent-light); }
+
+  .arrow { transition: transform .2s; display: inline-block; }
+  .arrow.open { transform: rotate(90deg); }
+
+  .steps-body {
+    display: none;
+    padding: 0.75rem 1.1rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .steps-body.open { display: block; }
+
+  .step {
+    display: flex;
+    gap: 8px;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .step:last-child { border-bottom: none; }
+
+  .step-n {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 2px;
+    min-width: 20px;
+  }
+
+  .step-text {
+    font-family: var(--mono);
+    color: var(--text);
+  }
+
+  .no-results {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .formula-bar {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .formula-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .formula-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .formula-list {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .f-item {
+    font-size: 0.82rem;
+    font-family: var(--mono);
+    color: var(--text);
+    background: var(--accent-light);
+    padding: 3px 10px;
+    border-radius: 5px;
+    color: var(--accent);
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
+    .search-wrap input { width: 100%; }
+    .header-inner { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-title">
+      <h1>Kinematika Masalalari</h1>
+      <p>Mexanika — harakat va tezlanishlar</p>
+    </div>
+    <div class="search-wrap">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Masala yoki mavzu qidiring…" oninput="applyFilters()">
+    </div>
+  </div>
+</header>
+
+<div class="filter-row" id="filterRow"></div>
+
+<div class="formula-bar">
+  <div style="height:1.2rem"></div>
+  <div class="formula-box">
+    <div>
+      <div class="formula-title">Asosiy formulalar</div>
+      <div class="formula-list">
+        <span class="f-item">a_τ = dv/dt = ε·R</span>
+        <span class="f-item">a_n = v²/r = ω²·R</span>
+        <span class="f-item">a = √(a_τ² + a_n²)</span>
+        <span class="f-item">ω = dφ/dt</span>
+        <span class="f-item">ε = dω/dt</span>
+        <span class="f-item">v = ω·R</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+  <div class="count-bar" id="countBar"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>Mexanika · Kinematika · 23 ta masala</footer>
+
+<script>
+const data = [
+  {n:1, tag:"To'la tezlanish", q:"s=0.2t²+0.3t qonuni, t=3s, r=1.5m da to'la tezlanish", given:"s=0.2t²+0.3t (m);  t=3s;  r=1.5m", steps:["v = ds/dt = 0.4t + 0.3","a_τ = dv/dt = 0.4 m/s²","v(3) = 0.4×3 + 0.3 = 1.5 m/s","a_n = v²/r = 1.5²/1.5 = 1.5 m/s²","a = √(0.4² + 1.5²) = √2.41"], ans:"a ≈ 1.55 m/s²"},
+  {n:2, tag:"Urinma tezlanish", q:"ω=2t³, R=0.2m, t=2s da urinma tezlanish", given:"ω = 2t³ rad/s;  R=0.2m;  t=2s", steps:["ε = dω/dt = 6t²","ε(2) = 6×4 = 24 rad/s²","a_τ = ε·R = 24×0.2"], ans:"a_τ = 4.8 m/s²"},
+  {n:3, tag:"Ilgarilanma harakat", q:"Ilgarilanma harakatda v_A=10 m/s, 20 sm uzoqlikdagi B nuqta tezligi", given:"v_A = 10 m/s;  d = 20 sm = 0.2 m", steps:["Ilgarilanma harakatda barcha nuqtalar bir xil tezlikda harakat qiladi","v_B = v_A"], ans:"v_B = 10 m/s"},
+  {n:4, tag:"Tekis aylanish", q:"Maxovik 1s da 4 marta aylanadi — 24π burchakga burilish vaqti", given:"n = 4 rev/s;  φ = 24π rad", steps:["ω = 2πn = 2π×4 = 8π rad/s","φ = ω·t  →  t = φ/ω = 24π / 8π"], ans:"t = 3 s"},
+  {n:5, tag:"Koordinata", q:"vx = −4π·sin(πt), t=1s dagi x koordinatasi (x₀=0)", given:"vx = −4π·sin(πt);  t=1s;  x(0)=0", steps:["x = ∫vx dt = 4cos(πt) + C","x(0)=0  →  C = −4","x(t) = 4cos(πt) − 4","x(1) = 4cos(π) − 4 = −4 − 4"], ans:"x(1) = −8 m"},
+  {n:6, tag:"Tezlanish moduli", q:"dx/dt=0.3t, y=0.4t, t=10s da tezlanish moduli", given:"vx = 0.3t m/s;  vy = 0.4 m/s;  t=10s", steps:["ax = dvx/dt = 0.3 m/s²","ay = dvy/dt = 0","a = √(0.3² + 0²)"], ans:"a = 0.3 m/s²"},
+  {n:7, tag:"G'ildirak eng yuqori nuqtasi", q:"R=2m, markaz v=24 m/s, eng yuqori nuqta tezligi", given:"R = 2m;  v_c = 24 m/s (sirpanmasdan)", steps:["ω = v_c/R = 24/2 = 12 rad/s","v_top = v_c + ω·R = 24 + 24"], ans:"v_top = 48 m/s"},
+  {n:8, tag:"To'la tezlanish", q:"φ=1+4t, R=0.2m, to'la tezlanish", given:"φ = 1+4t rad;  R = 0.2m", steps:["ω = 4 rad/s = const","ε = 0  →  a_τ = 0","a_n = ω²·R = 16×0.2 = 3.2 m/s²","a = √(0² + 3.2²)"], ans:"a = 3.2 m/s²"},
+  {n:9, tag:"To'liq tezlanish", q:"φ=1+2t, R=0.2m, to'liq tezlanish", given:"φ = 1+2t rad;  R = 0.2m", steps:["ω = 2 rad/s = const;  ε = 0","a_τ = 0","a_n = ω²·R = 4×0.2 = 0.8 m/s²"], ans:"a = 0.8 m/s²"},
+  {n:10, tag:"Urinma tezlanish", q:"s=4t²+6t+2, t=1s, r=1.5m da urinma tezlanish", given:"s = 4t²+6t+2 m;  t=1s;  r=1.5m", steps:["v = 8t + 6","a_τ = dv/dt = 8 m/s²"], ans:"a_τ = 8 m/s²"},
+  {n:11, tag:"Tezlik va tezlanish", q:"Krivoship φ=1+4t, R=0.4m — tezlik va tezlanish", given:"φ = 1+4t rad;  R = 0.4m", steps:["ω = 4 rad/s;  ε = 0","v = ω·R = 4×0.4 = 1.6 m/s","a_n = ω²·R = 16×0.4 = 6.4 m/s²","a_τ = 0"], ans:"v = 1.6 m/s;  a = 6.4 m/s²"},
+  {n:12, tag:"Tezlik va tezlanish", q:"Krivoship φ=5t²+4t+2, R=0.5m, t=4s", given:"φ = 5t²+4t+2 rad;  R=0.5m;  t=4s", steps:["ω = 10t+4;  ω(4) = 44 rad/s","ε = 10 rad/s²","v = 44×0.5 = 22 m/s","a_τ = 10×0.5 = 5 m/s²","a_n = 44²×0.5 = 968 m/s²","a = √(5²+968²)"], ans:"v = 22 m/s;  a ≈ 968 m/s²"},
+  {n:13, tag:"To'la tezlanish", q:"s=4t²+4t+1, t=2s, r=10m da to'la tezlanish", given:"s = 4t²+4t+1 m;  t=2s;  r=10m", steps:["v = 8t+4;  v(2) = 20 m/s","a_τ = 8 m/s²","a_n = 20²/10 = 40 m/s²","a = √(64+1600) = √1664"], ans:"a ≈ 40.8 m/s²"},
+  {n:14, tag:"Tezlanish", q:"φ=0.4t²+2t+10, R=1m, t=2s dagi tezlanish", given:"φ = 0.4t²+2t+10 rad;  R=1m;  t=2s", steps:["ω = 0.8t+2;  ω(2) = 3.6 rad/s","ε = 0.8 rad/s²","a_τ = 0.8×1 = 0.8 m/s²","a_n = 3.6²×1 = 12.96 m/s²","a = √(0.8²+12.96²)"], ans:"a ≈ 12.98 m/s²"},
+  {n:15, tag:"Tekis aylanish", q:"Maxovik 1s da 4 marta aylanadi — 36π burchakga burilish vaqti", given:"n = 4 rev/s;  φ = 36π rad", steps:["ω = 8π rad/s","t = 36π / 8π = 4.5 s"], ans:"t = 4.5 s"},
+  {n:16, tag:"Burchak va chiziqli", q:"φ=t³+9, φ=10 rad vaqtida barcha kattaliklar, R=0.6m", given:"φ = t³+9 rad;  φ=10 rad;  R=0.6m", steps:["t³=1  →  t=1 s","ω = 3t²;  ω(1) = 3 rad/s","ε = 6t;  ε(1) = 6 rad/s²","v = 3×0.6 = 1.8 m/s","a_τ = 6×0.6 = 3.6 m/s²","a_n = 9×0.6 = 5.4 m/s²"], ans:"ω=3 r/s; ε=6 r/s²; v=1.8 m/s; a_τ=3.6; a_n=5.4 m/s²"},
+  {n:17, tag:"To'liq tezlanish", q:"R=1m, ω=2 r/s, ε=3 r/s², g'ildirak to'g'inidagi to'liq tezlanish", given:"R=1m;  ω=2 rad/s;  ε=3 rad/s²", steps:["a_τ = ε·R = 3 m/s²","a_n = ω²·R = 4 m/s²","a = √(9+16) = √25"], ans:"a = 5 m/s²"},
+  {n:18, tag:"Tezlik va tezlanish", q:"r=0.8m, s=t³/3−t, t=5s dagi tezlik va tezlanish", given:"r=0.8m;  s=t³/3−t;  t=5s", steps:["v = t²−1;  v(5) = 24 m/s","a_τ = 2t;  a_τ(5) = 10 m/s²","a_n = 24²/0.8 = 720 m/s²","a = √(100+518400)"], ans:"v=24 m/s;  a≈720 m/s²"},
+  {n:19, tag:"To'liq tezlanish", q:"r=200m, a_τ=2 m/s², v=10 m/s dagi to'liq tezlanish", given:"r=200m;  a_τ=2 m/s²;  v=10 m/s", steps:["a_n = v²/r = 100/200 = 0.5 m/s²","a = √(4+0.25) = √4.25"], ans:"a ≈ 2.06 m/s²"},
+  {n:20, tag:"Burchak tezlanish", q:"ω₀=20 r/s, 24.5 marta aylanib to'xtagan g'ildirak — ε va t", given:"ω₀=20 rad/s;  N=24.5;  ω=0", steps:["φ = 2π×24.5 = 49π rad","0 = 400 + 2ε×49π","ε = −400/(98π) ≈ −1.3 rad/s²","t = (0−20)/(−1.3)"], ans:"ε ≈ −1.3 rad/s²;  t ≈ 15.4 s"},
+  {n:21, tag:"Tezlik va tezlanish", q:"ε=5 r/s², R=0.2m, t=2s, tinchdan boshlagan jism", given:"ε=5 rad/s²;  R=0.2m;  t=2s;  ω₀=0", steps:["ω = 5×2 = 10 rad/s","v = 10×0.2 = 2 m/s","a_τ = 5×0.2 = 1 m/s²","a_n = 100×0.2 = 20 m/s²","a = √(1+400) = √401"], ans:"v=2 m/s;  a≈20.02 m/s²"},
+  {n:22, tag:"Tishli uzatma", q:"3 g'ildirakli sistema: φ₁=2t³, R1=0.4m, R2=0.8m, r2=0.04m, R3=1m, t=2s", given:"φ₁=2t³;  R1=0.4; R2=0.8; r2=0.04; R3=1m;  t=2s", steps:["ω₁(2)=6t²|₂=24 rad/s","v₁=ω₁·R1=9.6 m/s","ω₂=9.6/0.8=12 rad/s","v₂=12×0.04=0.48 m/s","ω₃=0.48/1=0.48 rad/s","ε₁=24 r/s²; ε₃=24×0.5×0.04=0.48 r/s²","a_τ=0.48 m/s²; a_n=0.48²=0.23 m/s²"], ans:"v_M=0.48 m/s;  a≈0.53 m/s²"},
+  {n:23, tag:"Reduktor uzatmasi", q:"z1=18, z2=26, z3=28, z4=40 — 2-val burchak tezligi va uzatish soni", given:"z1=18; z2=26; z3=28; z4=40;  ω₁ — berilgan", steps:["i₁₂ = z2/z1 = 26/18 ≈ 1.444","i₃₄ = z4/z3 = 40/28 ≈ 1.429","i_umumiy = 1.444 × 1.429 ≈ 2.063","ω₂ = ω₁ / i"], ans:"i ≈ 2.06;  ω₂ = ω₁/2.06"},
+];
+
+const tags = [...new Set(data.map(d => d.tag))];
+
+function buildFilters() {
+  const row = document.getElementById('filterRow');
+  const all = document.createElement('button');
+  all.className = 'pill active';
+  all.textContent = 'Barchasi';
+  all.dataset.tag = '';
+  all.onclick = () => { setActive(all); applyFilters(); };
+  row.appendChild(all);
+  tags.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'pill';
+    b.textContent = t;
+    b.dataset.tag = t;
+    b.onclick = () => { setActive(b); applyFilters(); };
+    row.appendChild(b);
+  });
+}
+
+function setActive(el) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function getActiveTag() {
+  const a = document.querySelector('.pill.active');
+  return a ? a.dataset.tag : '';
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const tag = getActiveTag();
+  const filtered = data.filter(d => {
+    const matchTag = !tag || d.tag === tag;
+    const matchQ = !q || String(d.n).includes(q) || d.q.toLowerCase().includes(q) || d.tag.toLowerCase().includes(q) || d.ans.toLowerCase().includes(q);
+    return matchTag && matchQ;
+  });
+  renderCards(filtered);
+}
+
+function renderCards(list) {
+  const grid = document.getElementById('grid');
+  document.getElementById('countBar').textContent = list.length + ' ta masala ko\'rsatilmoqda';
+  grid.innerHTML = '';
+  if (!list.length) {
+    grid.innerHTML = '<div class="no-results">Hech narsa topilmadi. Boshqa kalit so\'z kiriting.</div>';
+    return;
+  }
+  list.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-meta">
+          <div class="num-badge">${d.n}</div>
+          <span class="tag-badge">${d.tag}</span>
+        </div>
+        <div class="card-q">${d.q}</div>
+      </div>
+      <div class="given-block">
+        <div class="given-label">Berilgan</div>
+        ${d.given}
+      </div>
+      <div class="ans-block">
+        <span class="ans-label">Javob</span>
+        <span class="ans-val">${d.ans}</span>
+      </div>
+      <button class="steps-toggle" onclick="toggleSteps(this)">
+        <svg class="arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+        Yechim bosqichlari
+      </button>
+      <div class="steps-body">
+        ${d.steps.map((s,i) => `<div class="step"><span class="step-n">${i+1}.</span><span class="step-text">${s}</span></div>`).join('')}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function toggleSteps(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector('.arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+buildFilters();
+applyFilters();
+</script>
+</body>
+</html>
